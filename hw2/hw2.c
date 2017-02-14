@@ -15,13 +15,13 @@
 // Arguments:	argc = number of arguments suppled by user
 //				argv = array of argument values
 //
-//
+
 int main(int argc, char** argv) {
 	char* line = "ls -f /helloWorld";
-	struct command_t *myStruct;
-	myStruct = malloc(sizeof(command_t));
+    command_t* myStruct;
+	myStruct =(command_t*) malloc(sizeof(command_t));
 	myStruct->name = "hello";
-	printf("%s\n%s\n",line,*myStruct->name );
+	printf("%s\n",(myStruct->name) );
 
 	// ----------------------------------
 	// Pseudocode
