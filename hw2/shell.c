@@ -67,8 +67,11 @@ HINT(s): This function is "essentially" an exercise in string parsing.
 */
 void parse(char* line, command_t* p_cmd){
   int numOfChars = 0;
-  for(int i = 0;line[i]!='\0';i=i+1){
+  for(int i = 0;line[i]!='\0';i=i+1){//loops through and counts the number of chars in the char* line
     numOfChars = i + 1;
+  }
+  while(*(line+numOfChars -1) == ' '){
+      numOfChars = numOfChars - 1;
   }
   p_cmd->name = "Da Real Slim Shady";
   p_cmd->argc = numOfChars;

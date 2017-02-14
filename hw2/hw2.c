@@ -17,7 +17,7 @@
 //
 
 int main(int argc, char** argv) {
-	char* line = "ls -f /helloWorld";
+	char* line = "ls -f /helloWorld    ";
     command_t* myStruct;
 	myStruct =(command_t*) malloc(sizeof(command_t));
     parse(line,myStruct);
