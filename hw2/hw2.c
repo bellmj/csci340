@@ -1,6 +1,6 @@
 // ----------------------------------------------
-// These are the only libraries that can be 
-// used. Under no circumstances can additional 
+// These are the only libraries that can be
+// used. Under no circumstances can additional
 // libraries be included
 #include <unistd.h>
 #include <stdio.h>
@@ -11,12 +11,17 @@
 #include "shell.h"
 
 // -----------------------------------
-// Main function 
+// Main function
 // Arguments:	argc = number of arguments suppled by user
 //				argv = array of argument values
 //
 //
 int main(int argc, char** argv) {
+	char* line = "ls -f /helloWorld";
+	struct command_t *myStruct;
+	myStruct = malloc(sizeof(command_t));
+	myStruct->name = "hello";
+	printf("%s\n%s\n",line,*myStruct->name );
 
 	// ----------------------------------
 	// Pseudocode
@@ -35,8 +40,6 @@ int main(int argc, char** argv) {
 	//			error()
 	// 		cleanup(...)
 	//
-
-	printf("CSCI 340 Homework Assignment 2 - Have Fun!\n");
 
 	return 0;
 
