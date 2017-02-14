@@ -20,8 +20,9 @@ int main(int argc, char** argv) {
 	char* line = "ls -f /helloWorld";
     command_t* myStruct;
 	myStruct =(command_t*) malloc(sizeof(command_t));
-	myStruct->name = "hello";
-	printf("%s\n",(myStruct->name) );
+    parse(line,myStruct);
+	printf("%s\n",(myStruct->name));
+	printf("%d\n",myStruct->argc);
 
 	// ----------------------------------
 	// Pseudocode
@@ -40,6 +41,7 @@ int main(int argc, char** argv) {
 	//			error()
 	// 		cleanup(...)
 	//
+	free(myStruct);
 
 	return 0;
 
