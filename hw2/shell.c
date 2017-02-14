@@ -67,12 +67,23 @@ HINT(s): This function is "essentially" an exercise in string parsing.
 */
 void parse(char* line, command_t* p_cmd){
   int numOfChars = 0;
+  int numOfSpacesToRemove = 0; //the number of trailing spaces in the char* line
   for(int i = 0;line[i]!='\0';i=i+1){//loops through and counts the number of chars in the char* line
     numOfChars = i + 1;
   }
   while(*(line+numOfChars -1) == ' '){
-      numOfChars = numOfChars - 1;
+      numOfSpacesToRemove = numOfSpacesToRemove + 1;
+      numOfChars = numOfChars - 1;//sets numOfChars to the correct number of chars minus the spaces at the end
   }
+  char lineMinusSpaces[numOfChars];
+  printf("the size of the new string is %d\n",numOfChars);
+  for(int i = 0; i < numOfChars;i=i+1){//assigns line to lineMinusSpaces without the trailing spaces
+    *(lineMinusSpaces + i) = line[i];
+  }
+  line = lineMinusSpaces;//ressigns lineMinusSpaces back to line.
+  line[numOfChars]= '\0';//terminates the string without spaces
+  //todo here I have a line with no trailling spaces
+  //I can count the number of spaces to get the number of arguments here\/
   p_cmd->name = "Da Real Slim Shady";
   p_cmd->argc = numOfChars;
 
