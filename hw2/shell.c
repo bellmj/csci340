@@ -92,7 +92,7 @@ void parse(char* line, command_t* p_cmd){
   }
   int locationOfSpaces[numOfSpaces+2];
   locationOfSpaces[0] = -1;//assigns zero as the first space so we can take a substring from first_location +1 to next_location -1 (inclusive)
-  locationOfSpaces[numOfSpaces+1] = numOfChars;
+  locationOfSpaces[numOfSpaces+1] = numOfChars-1;
   int spaceCounter = 1;
   for(int i = 0;lineMinusSpaces[i]!='\0';i=i+1){//loops through char* line again but this time it remembers where each space was located.
     if(lineMinusSpaces[i]==' '){
@@ -102,18 +102,20 @@ void parse(char* line, command_t* p_cmd){
   }
    //this loops prints the locations of valid spaces within line including a -1 first element, and a last element (sizeof line) as an implict space
   for(int i = 0; i < numOfSpaces+2;i= i + 1){
-    //printf("\t\t%d\n",locationOfSpaces[i] );
+    printf("\t\t%d\n",locationOfSpaces[i] );
   }
   //
   //  AT THIS POINT ARGC IS THE ONLY THING CALCULATED
   char ** argvTemp;//numOfSpaces + 1 is the same as argc
   argvTemp = (char**) malloc(sizeof(numOfSpaces+1));
   for(int i = 0;i<=numOfSpaces;i=i+1){//this loop is trying to assign the line elements to their position in argv
+      printf("i = %d\n",i );
       int sizeOfArgument = (locationOfSpaces[i+1]-locationOfSpaces[i])- 1;
       printf("%d\n",sizeOfArgument );
       argvTemp[i] = (char*) malloc(sizeof(sizeOfArgument+1));
       int counter = 0;
       for(int z = locationOfSpaces[i]+1;z<locationOfSpaces[i+1];z = z +1){
+        printf("z = %d\n",z );
         *((*(argvTemp + i))+counter) = lineMinusSpaces[z];
         // printf("I sure hope this works: %c\n",lineMinusSpaces[z] );
         counter = counter +1;
