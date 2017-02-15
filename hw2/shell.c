@@ -68,24 +68,56 @@ HINT(s): This function is "essentially" an exercise in string parsing.
 void parse(char* line, command_t* p_cmd){
   int numOfChars = 0;
   int numOfSpacesToRemove = 0; //the number of trailing spaces in the char* line
-  for(int i = 0;line[i]!='\0';i=i+1){//loops through and counts the number of chars in the char* line
+  for(int i = 0;line[i]!='\0';i=i+1){//loops through the char* line and counts the number of chars in the char* line
     numOfChars = i + 1;
   }
   while(*(line+numOfChars -1) == ' '){
       numOfSpacesToRemove = numOfSpacesToRemove + 1;
       numOfChars = numOfChars - 1;//sets numOfChars to the correct number of chars minus the spaces at the end
   }
-  char lineMinusSpaces[numOfChars];
+  char * lineMinusSpaces = (char*)malloc(numOfChars);
   printf("the size of the new string is %d\n",numOfChars);
   for(int i = 0; i < numOfChars;i=i+1){//assigns line to lineMinusSpaces without the trailing spaces
     *(lineMinusSpaces + i) = line[i];
   }
-  line = lineMinusSpaces;//ressigns lineMinusSpaces back to line.
-  line[numOfChars]= '\0';//terminates the string without spaces
+  lineMinusSpaces[numOfChars]= '\0';//terminates the string without spaces
   //todo here I have a line with no trailling spaces
   //I can count the number of spaces to get the number of arguments here\/
-  p_cmd->name = "Da Real Slim Shady";
-  p_cmd->argc = numOfChars;
+  int numOfSpaces = 0;
+
+  for(int i = 0;lineMinusSpaces[i]!='\0';i=i+1){//loops through char* line and counts the number of spaces in the char* line
+    if(lineMinusSpaces[i]==' '){
+      numOfSpaces = numOfSpaces + 1;
+    }
+  }
+  int locationOfSpaces[numOfSpaces+2];
+  locationOfSpaces[0] = -1;//assigns zero as the first space so we can take a substring from first_location +1 to next_location -1 (inclusive)
+  locationOfSpaces[numOfSpaces+1] = numOfChars;
+  int spaceCounter = 1;
+  for(int i = 0;lineMinusSpaces[i]!='\0';i=i+1){//loops through char* line again but this time it remembers where each space was located.
+    if(lineMinusSpaces[i]==' '){
+      locationOfSpaces[spaceCounter] = i;
+      spaceCounter = spaceCounter + 1;
+    }
+  }
+   //this loops prints the locations of valid spaces within line including a -1 first element, and a last element (sizeof line) as an implict space
+  for(int i = 0; i < numOfSpaces+2;i= i + 1){
+    printf("\t\t%d\n",locationOfSpaces[i] );
+  }
+  //
+  //  AT THIS POINT ARGC IS THE ONLY THING CALCULATED
+  char argv[numOfSpaces+1][numOfChars];//numOfSpaces + 1 is the same as argc
+for(int i = 0;i<=numOfSpaces;i=i+1){
+    int counter = 0;
+    for(int v = locationOfSpaces[i];v<locationOfSpaces[i+i];i=i+1){
+      (*((*(argv + i))+counter)) = lineMinusSpaces[v];
+      counter = counter +1;
+    }
+}
+  // printf("%s\n",lineMinusSpaces);//for some reason printing this line here allows line to be passed to main
+  // p_cmd->argv = argv;
+  p_cmd->argc = numOfSpaces+1;//assigns argc to be the number of spaces in the line plus one
+  p_cmd->name = lineMinusSpaces;
 
 }
 // int is_builtin(command_t* p_cmd);
