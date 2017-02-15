@@ -17,12 +17,15 @@
 //
 
 int main(int argc, char** argv) {
-	char* line = "ls -f /helloWorld";
+	char* line = "ls -la";
     command_t* myStruct;
 	myStruct =(command_t*) malloc(sizeof(command_t));
     parse(line,myStruct);
 	printf("%s\n",(myStruct->name));
 	printf("%d\n",myStruct->argc);
+	printf("%s\n",(myStruct->argv[0]));
+	printf("%s\n",(myStruct->argv[1]));
+
 
 	// ----------------------------------
 	// Pseudocode

@@ -76,7 +76,7 @@ void parse(char* line, command_t* p_cmd){
       numOfChars = numOfChars - 1;//sets numOfChars to the correct number of chars minus the spaces at the end
   }
   char * lineMinusSpaces = (char*)malloc(numOfChars);
-  printf("the size of the new string is %d\n",numOfChars);
+  //printf("the size of the new string is %d\n",numOfChars);
   for(int i = 0; i < numOfChars;i=i+1){//assigns line to lineMinusSpaces without the trailing spaces
     *(lineMinusSpaces + i) = line[i];
   }
@@ -102,21 +102,28 @@ void parse(char* line, command_t* p_cmd){
   }
    //this loops prints the locations of valid spaces within line including a -1 first element, and a last element (sizeof line) as an implict space
   for(int i = 0; i < numOfSpaces+2;i= i + 1){
-    printf("\t\t%d\n",locationOfSpaces[i] );
+    //printf("\t\t%d\n",locationOfSpaces[i] );
   }
   //
   //  AT THIS POINT ARGC IS THE ONLY THING CALCULATED
   char ** argvTemp;//numOfSpaces + 1 is the same as argc
   argvTemp = (char**) malloc(sizeof(numOfSpaces+1));
-for(int i = 0;i<=numOfSpaces;i=i+1){//this loop is trying to assign the line elements to their position in argv
-    int sizeOfArgument = (locationOfSpaces[i+1]-locationOfSpaces[i])- 1;
-    printf("%d\n",sizeOfArgument );
-    argvTemp[i] = (char*) malloc(sizeof(sizeOfArgument));
-}
+  for(int i = 0;i<=numOfSpaces;i=i+1){//this loop is trying to assign the line elements to their position in argv
+      int sizeOfArgument = (locationOfSpaces[i+1]-locationOfSpaces[i])- 1;
+      //printf("%d\n",sizeOfArgument );
+      argvTemp[i] = (char*) malloc(sizeof(sizeOfArgument+1));
+      int counter = 0;
+      for(int z = locationOfSpaces[i]+1;z<locationOfSpaces[i+1];z = z +1){
+        *((*(argvTemp + i))+counter) = lineMinusSpaces[z];
+        // printf("I sure hope this works: %c\n",lineMinusSpaces[z] );
+        counter = counter +1;
+      }
+      *((*(argvTemp + i))+counter) = '\0';//terminates my strings
+  }
   // printf("%s\n",lineMinusSpaces);//for some reason printing this line here allows line to be passed to main
-  // p_cmd->argv = argv;
+   p_cmd->argv = argvTemp;
   p_cmd->argc = numOfSpaces+1;//assigns argc to be the number of spaces in the line plus one
-  p_cmd->name = lineMinusSpaces;
+  p_cmd->name = argvTemp[0];
 
 }
 // int is_builtin(command_t* p_cmd);
