@@ -110,7 +110,7 @@ void parse(char* line, command_t* p_cmd){
   argvTemp = (char**) malloc(sizeof(numOfSpaces+1));
   for(int i = 0;i<=numOfSpaces;i=i+1){//this loop is trying to assign the line elements to their position in argv
       int sizeOfArgument = (locationOfSpaces[i+1]-locationOfSpaces[i])- 1;
-      //printf("%d\n",sizeOfArgument );
+      printf("%d\n",sizeOfArgument );
       argvTemp[i] = (char*) malloc(sizeof(sizeOfArgument+1));
       int counter = 0;
       for(int z = locationOfSpaces[i]+1;z<locationOfSpaces[i+1];z = z +1){
