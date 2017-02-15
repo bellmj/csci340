@@ -106,13 +106,12 @@ void parse(char* line, command_t* p_cmd){
   }
   //
   //  AT THIS POINT ARGC IS THE ONLY THING CALCULATED
-  char argv[numOfSpaces+1][numOfChars];//numOfSpaces + 1 is the same as argc
-for(int i = 0;i<=numOfSpaces;i=i+1){
-    int counter = 0;
-    for(int v = locationOfSpaces[i];v<locationOfSpaces[i+i];i=i+1){
-      (*((*(argv + i))+counter)) = lineMinusSpaces[v];
-      counter = counter +1;
-    }
+  char ** argvTemp;//numOfSpaces + 1 is the same as argc
+  argvTemp = (char**) malloc(sizeof(numOfSpaces+1));
+for(int i = 0;i<=numOfSpaces;i=i+1){//this loop is trying to assign the line elements to their position in argv
+    int sizeOfArgument = (locationOfSpaces[i+1]-locationOfSpaces[i])- 1;
+    printf("%d\n",sizeOfArgument );
+    argvTemp[i] = (char*) malloc(sizeof(sizeOfArgument));
 }
   // printf("%s\n",lineMinusSpaces);//for some reason printing this line here allows line to be passed to main
   // p_cmd->argv = argv;
