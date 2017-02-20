@@ -8,7 +8,7 @@ typedef struct {
 	char* name;	   // name of command (must malloc)
 	int argc;	   // total number of arguments
 	char** argv;	   // argument values (must malloc)
-	
+
 } command_t;
 
 /* ----------------------------------------------------------------------------
@@ -16,14 +16,14 @@ typedef struct {
 This function will parse the command (cmd for short) and its arguments
 specified by the user.
 
-HINT(s): This function is "essentially" an exercise in string parsing. 
+HINT(s): This function is "essentially" an exercise in string parsing.
 
         EXAMPLE#1, if the user enters
 
 				cd /mnt/cdrom
 
-		at the shell prompt, line would contain "cd /mnt/cdrom". 
-		Using the space character as the delimiter, the fields in 
+		at the shell prompt, line would contain "cd /mnt/cdrom".
+		Using the space character as the delimiter, the fields in
 		the command struct would be:
 
 				- name = "cd"
@@ -34,22 +34,22 @@ HINT(s): This function is "essentially" an exercise in string parsing.
 
 				ls -la
 
-		at the shell prompt, line would contain "ls -la". Using the 
-		space character as the delimiter, the fields in the command 
+		at the shell prompt, line would contain "ls -la". Using the
+		space character as the delimiter, the fields in the command
 		struct would be:
 
 				- name = "ls"
 				- argc = 2
-				- argv = {"ls", "-la", NULL} 
+				- argv = {"ls", "-la", NULL}
 
-        EXAMPLE#3, if the user enters nothing at the shell prompt (i.e. 
-        simply hits the return key), line would NULL, and the fields in 
+        EXAMPLE#3, if the user enters nothing at the shell prompt (i.e.
+        simply hits the return key), line would NULL, and the fields in
         the command struct would be:
 
 				- name = NULL
 				- argc = 0
 				- argv = {NULL}
- 
+
  function:
 	- parameter(s): char* pointer that contains the cmd and its arguments,
 			and a pointer to an existing command_t structure
@@ -64,10 +64,10 @@ This function will only execute external commands (cmd for short),
 such as ls or cp, using the execv system function. In the execute
 function, you must fork a child process.
 
- HINT(s): 
- (1) An example is provided that demonstrates how the fork and wait operations 
+ HINT(s):
+ (1) An example is provided that demonstrates how the fork and wait operations
  	are coded (see "Executing a Command" section in assignment PDF).
- (2) The execv is assuming the full path name for the cmd is provided (i.e. the 
+ (2) The execv is assuming the full path name for the cmd is provided (i.e. the
  	exact file location, starting from / or the root folder). For
  	instance, simply providing the "pwd" cmd is equivalent to
  	"./pwd" (i.e. pwd cmd is located in the same folder as parent
@@ -80,7 +80,7 @@ function, you must fork a child process.
 			char* fullpath;
 
 			fnd = find_fullpath(fullpath, p_cmd);
-		
+
 			if (fnd) {
 				if (fork() == 0) {
 					execv(fullpath, p_cmd->argv);
@@ -92,7 +92,7 @@ function, you must fork a child process.
 			}
 
 
- 
+
  function:
 	- parameter(s): pointer to a command_t structure
         - return: status code from wait function.
@@ -106,7 +106,7 @@ This function is used determine if the named command (cmd for short)
 entered by the user in the shell can be found in one of the folders
 defined in the PATH environment (env or short) variable.
 
-HINT(s): Use getenv() system function to retrieve the folders defined in the 
+HINT(s): Use getenv() system function to retrieve the folders defined in the
 		PATH variable. An small code segment is shown below
 		that demonstrates how to retrieve folders defined in
 		your PATH.
@@ -123,14 +123,14 @@ HINT(s): Use getenv() system function to retrieve the folders defined in the
 		path, then uses this folder along with the stat
 		function (see "File/Directory Status" section in the
 		assignment PDF).
- 
+
  function:
 
 	- parameter(s): char* pointer that contains the fullpath to
           named command found by this function, and a pointer to an
           existing command_t structure
 
-	- return: TRUE if cmd is in the PATH, or FALSE if not in the PATH. 
+	- return: TRUE if cmd is in the PATH, or FALSE if not in the PATH.
 
 */
 int find_fullpath(char* fullpath, command_t* p_cmd);
@@ -144,7 +144,7 @@ HINT(s): Use valid_builtin_commands array defined in shell.c
 
 function:
 	- parameter(s): pointer to a command_t structure
-	- return: TRUE if the cmd is in array, else FALSE if not in array. 
+	- return: TRUE if the cmd is in array, else FALSE if not in array.
 
 */
 int is_builtin(command_t* p_cmd);
@@ -154,7 +154,7 @@ int is_builtin(command_t* p_cmd);
 This function is used execute built-in commands such as change
 directory (cd)
 
-HINT(s): See man page for more information about chdir function 
+HINT(s): See man page for more information about chdir function
 
 function:
 	- parameter(s): pointer to a command_t structure
@@ -171,9 +171,9 @@ int do_builtin(command_t* p_cmd);
 This function is used to free memory that may be malloc'd for the name
 and argv fields in the command_t structure.  To be safe, you should
 also set the pointer values to NULL.
- 
+
 HINT(s): See man page for more information about free function
- 
+
 function:
 	- parameter(s): pointer to a command_t structure
 	- return: N/A
