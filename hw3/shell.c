@@ -116,7 +116,7 @@ int execute(command_t* p_cmd)
   char** argArray = p_cmd->argv;
   int pipeCounter;
   for(pipeCounter = 0;pipeCounter <= (p_cmd->argc)-1 && *argArray[pipeCounter] != '|'; pipeCounter = pipeCounter +1){
-    noop
+    noop;
   }//this loop leaves pipeCounter as the index of the pipe or argc if there is no pipe
   if(pipeCounter == p_cmd->argc){
     //Ceci n'est pas une pipe
