@@ -1,3 +1,4 @@
 *.out
 *.o
 *.deb
+*.DS_Store

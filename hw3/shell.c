@@ -16,6 +16,7 @@ int my_strncat(char *dest, const char *src, int n);
 int my_strncpy(char *dest, const char *src, int n);
 int my_strequal(const char *s, const char *t);
 int my_strlen(const char* s);
+int parseCommandT(command_t *pipedCommandT, command_t *retCmd1,command_t *retCmd2);
 int iswhite(char c);
 
 // --------------------------------------------
@@ -119,8 +120,7 @@ int execute(command_t* p_cmd)
     noop;
   }//this loop leaves pipeCounter as the index of the pipe or argc if there is no pipe
   if(pipeCounter == p_cmd->argc){
-    //Ceci n'est pas une pipe
-    printf("%s\n", "Ceci n'est pas une pipe");
+    //Ceci n'est pas une pipe!
     if ((pid = fork()) == 0) {
       find_fullpath(fullpath, p_cmd);
       execv(fullpath, p_cmd->argv);
@@ -129,13 +129,17 @@ int execute(command_t* p_cmd)
     }
     return wait(&status);
   } else {
+    //TODO call private method to split current command_t struct into 2 command_t structs
+    command_t fake1;
+    command_t fake2;
+    parseCommandT(p_cmd, &fake1,&fake2);
     return -1;
 
   }
 
 
 
-  //
+  //the old execute code before pipes were allowed
   // if ((pid = fork()) == 0) {
   //   find_fullpath(fullpath, p_cmd);
   //   execv(fullpath, p_cmd->argv);
@@ -216,8 +220,36 @@ void cleanup(command_t* p_cmd)
   p_cmd->argv = NULL;
   p_cmd->argc = 0;
 }
+//My utility FUNCTIONS
+/**
+*This method takes 3 command_t structs as input. The first struct should be populated and the second and third struct are for return
+* @param pipedCommandT: a command_t struct that contains the original command and inside of argv it contains pipe charcter followed by the parsed command
+* @return retCmd1 a command_t struct that is the first command;
+* @return retCmd2 a command_t struct that is the second command after the pipe
+*/
+int parseCommandT(command_t *pipedCommandT, command_t *retCmd1,command_t *retCmd2){
+  retCmd1->name = (char*)malloc(sizeof(pipedCommandT->name));
+  my_strncpy(retCmd1->name,pipedCommandT->name,my_strlen(pipedCommandT->name));
+  int pipeCounter;
+  for(pipeCounter = 0;pipeCounter <= (pipedCommandT->argc)-1 && *((pipedCommandT->argv)[pipeCounter]) != '|'; pipeCounter = pipeCounter +1){
+    noop;
+  }
+  if(pipeCounter == pipedCommandT->argc)
+    perror("there is no pipe to parse");
+  retCmd2->argc = pipedCommandT->argc - pipeCounter-1;
+  retCmd1->argc = pipeCounter;
+  retCmd2->name = (char*)malloc(sizeof((pipedCommandT->argv)[pipeCounter+1]));
+  my_strncpy(retCmd2->name,(pipedCommandT->argv)[pipeCounter+1], my_strlen((pipedCommandT->argv)[pipeCounter+1]));
+  printf("%s\n",retCmd2->name );
 
-// **** MY UTILITY FUNCTIONS
+  return 1;
+
+}
+
+
+
+
+// **** Leclerc's UTILITY FUNCTIONS
 
 int my_strlen(const char* s)
 {
