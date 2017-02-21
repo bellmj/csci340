@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include "shell.h"
 #define MAXSTRLEN 255
+#define noop
 
 int my_strncat(char *dest, const char *src, int n);
 int my_strncpy(char *dest, const char *src, int n);
@@ -112,15 +113,37 @@ int execute(command_t* p_cmd)
   int pid;
   int status;
   char fullpath[MAXSTRLEN];
+  char** argArray = p_cmd->argv;
+  int pipeCounter;
+  for(pipeCounter = 0;pipeCounter <= (p_cmd->argc)-1 && *argArray[pipeCounter] != '|'; pipeCounter = pipeCounter +1){
+    noop
+  }//this loop leaves pipeCounter as the index of the pipe or argc if there is no pipe
+  if(pipeCounter == p_cmd->argc){
+    //Ceci n'est pas une pipe
+    printf("%s\n", "Ceci n'est pas une pipe");
+    if ((pid = fork()) == 0) {
+      find_fullpath(fullpath, p_cmd);
+      execv(fullpath, p_cmd->argv);
+      perror("Execute terminated with an error condition!\n");
+      exit(1);
+    }
+    return wait(&status);
+  } else {
+    return -1;
 
-  if ((pid = fork()) == 0) {
-    find_fullpath(fullpath, p_cmd);
-    execv(fullpath, p_cmd->argv);
-    perror("Execute terminated with an error condition!\n");
-    exit(1);
   }
 
-  return wait(&status);
+
+
+  //
+  // if ((pid = fork()) == 0) {
+  //   find_fullpath(fullpath, p_cmd);
+  //   execv(fullpath, p_cmd->argv);
+  //   perror("Execute terminated with an error condition!\n");
+  //   exit(1);
+  // }
+
+
 }
 
 int find_fullpath(char* fullpath, command_t* p_cmd)
