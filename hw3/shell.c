@@ -240,7 +240,20 @@ int parseCommandT(command_t *pipedCommandT, command_t *retCmd1,command_t *retCmd
   retCmd1->argc = pipeCounter;
   retCmd2->name = (char*)malloc(sizeof((pipedCommandT->argv)[pipeCounter+1]));
   my_strncpy(retCmd2->name,(pipedCommandT->argv)[pipeCounter+1], my_strlen((pipedCommandT->argv)[pipeCounter+1]));
-  printf("%s\n",retCmd2->name );
+  retCmd1->argv = (char**)malloc((retCmd1->argc)*sizeof(char*));
+  retCmd2->argv = (char**)malloc((retCmd2->argc)*sizeof(char*));
+  for(int i = 0; i < retCmd1->argc;i++){
+    retCmd1->argv[i] = malloc(my_strlen((pipedCommandT->argv)[i]));
+    printf("%s\n",(pipedCommandT->argv)[i] );
+    my_strncpy((retCmd1->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
+  }
+  for(int i = pipeCounter; i < pipeCounter + retCmd2->argc;i++){//TODO start working here
+    retCmd2->argv[i] = malloc(my_strlen((pipedCommandT->argv)[i]));
+    printf("%s\n",(pipedCommandT->argv)[i] );
+    my_strncpy((retCmd2->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
+  }
+
+
 
   return 1;
 
