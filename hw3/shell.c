@@ -129,10 +129,17 @@ int execute(command_t* p_cmd)
     }
     return wait(&status);
   } else {
+    //this is a pipe
     //TODO call private method to split current command_t struct into 2 command_t structs
     command_t fake1;
     command_t fake2;
-    parseCommandT(p_cmd, &fake1,&fake2);
+    parseCommandT(p_cmd, &fake1, &fake2);
+    printf("%s\n", fake1.name);
+    printf("%s\n", fake2.name);
+    printf("%s\n", fake1.argv[0]);
+    printf("%s\n", fake1.argv[1]);
+    printf("%s\n", fake2.argv[0]);
+
     return -1;
 
   }
@@ -236,22 +243,30 @@ int parseCommandT(command_t *pipedCommandT, command_t *retCmd1,command_t *retCmd
   }
   if(pipeCounter == pipedCommandT->argc)
     perror("there is no pipe to parse");
-  retCmd2->argc = pipedCommandT->argc - pipeCounter-1;
+  int justTemp = pipedCommandT->argc;
+  retCmd2->argc = justTemp - pipeCounter-1;
+  printf("The argc for retCmd2 is:%d\n",retCmd2->argc );
   retCmd1->argc = pipeCounter;
   retCmd2->name = (char*)malloc(sizeof((pipedCommandT->argv)[pipeCounter+1]));
   my_strncpy(retCmd2->name,(pipedCommandT->argv)[pipeCounter+1], my_strlen((pipedCommandT->argv)[pipeCounter+1]));
-  retCmd1->argv = (char**)malloc((retCmd1->argc)*sizeof(char*));
-  retCmd2->argv = (char**)malloc((retCmd2->argc)*sizeof(char*));
-  for(int i = 0; i < retCmd1->argc;i++){
-    retCmd1->argv[i] = malloc(my_strlen((pipedCommandT->argv)[i]));
-    printf("%s\n",(pipedCommandT->argv)[i] );
+  retCmd1->argv = (char**)malloc((retCmd1->argc+1) * sizeof(char *));
+  retCmd2->argv = (char**)malloc((retCmd2->argc+1) * sizeof(char *));
+  int i;
+//  printf("%s\n",pipedCommandT->argv[0] );
+  for(i = 0; i < retCmd1->argc;i++){
+  //  printf("\t\t%d\n",i );
+    retCmd1->argv[i] = (char *)malloc(my_strlen((pipedCommandT->argv)[i])+1);
+
     my_strncpy((retCmd1->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
   }
-  for(int i = pipeCounter; i < pipeCounter + retCmd2->argc;i++){//TODO start working here
-    retCmd2->argv[i] = malloc(my_strlen((pipedCommandT->argv)[i]));
-    printf("%s\n",(pipedCommandT->argv)[i] );
+  retCmd1->argv[i] = NULL;
+  for( i = pipeCounter+1; i <= pipeCounter + retCmd2->argc;i++){//TODO start working here
+    printf("%d\n",i );
+    retCmd2->argv[i] = (char *)malloc(my_strlen((pipedCommandT->argv)[i])+1);
     my_strncpy((retCmd2->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
+     printf("%s\n",(retCmd2->argv)[i] );
   }
+  retCmd2->argv[i] = NULL;
 
 
 
