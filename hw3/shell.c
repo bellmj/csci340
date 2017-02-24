@@ -155,6 +155,7 @@ int execute(command_t* p_cmd)
       char * fullPath1 = (char *)malloc(MAXSTRLEN);
       find_fullpath(fullPath1,&fake1);
       execv(fullPath1, fake1.argv);
+      exit(1);
     }
     if ((cpid2 = fork()) == 0) {
       close(0); /* close normal stdin */
@@ -163,12 +164,13 @@ int execute(command_t* p_cmd)
       char * fullPath2 = (char *)malloc(MAXSTRLEN);
       find_fullpath(fullPath2,&fake2);
       execv(fullPath2, fake2.argv);
+      exit(1);
     }
     close(fds[0]);
     close(fds[1]);
     waitpid(cpid1, &child_process_status, 0);
     waitpid(cpid2, &child_process_status, 0);
-    exit(1);
+
 
     return -1;
 
