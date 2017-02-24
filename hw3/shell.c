@@ -134,11 +134,41 @@ int execute(command_t* p_cmd)
     command_t fake1;
     command_t fake2;
     parseCommandT(p_cmd, &fake1, &fake2);
-    printf("%s\n", fake1.name);
-    printf("%s\n", fake2.name);
-    printf("%s\n", fake1.argv[0]);
-    printf("%s\n", fake1.argv[1]);
-    printf("%s\n", fake2.argv[0]);
+    // printf("%s\n", fake1.name);
+    // printf("%d\n",fake1.argc);
+    // printf("%s\n", fake2.name);
+    // printf("%s\n", fake1.argv[0]);
+    // printf("%s\n", fake1.argv[1]);
+    // printf("%s\n", fake2.argv[0]);
+    // printf("%d\n", fake2.argc);
+    // printf("%s\n", fake2.argv[1]);
+    // printf("%s\n", fake2.argv[2]);
+
+    int child_process_status;
+    int fds[2];
+    pid_t cpid1, cpid2;
+    pipe(fds);
+    if ((cpid1 = fork()) == 0) {
+      close(1); /* close normal stdout */
+      dup(fds[1]); /* make stdout same as fds[1] */
+      close(fds[0]); /* we don’t need this */
+      char * fullPath1 = (char *)malloc(MAXSTRLEN);
+      find_fullpath(fullPath1,&fake1);
+      execv(fullPath1, fake1.argv);
+    }
+    if ((cpid2 = fork()) == 0) {
+      close(0); /* close normal stdin */
+      dup(fds[0]); /* make stdin same as fds[0] */
+      close(fds[1]); /* we don’t need this */
+      char * fullPath2 = (char *)malloc(MAXSTRLEN);
+      find_fullpath(fullPath2,&fake2);
+      execv(fullPath2, fake2.argv);
+    }
+    close(fds[0]);
+    close(fds[1]);
+    waitpid(cpid1, &child_process_status, 0);
+    waitpid(cpid2, &child_process_status, 0);
+    exit(1);
 
     return -1;
 
@@ -235,38 +265,57 @@ void cleanup(command_t* p_cmd)
 * @return retCmd2 a command_t struct that is the second command after the pipe
 */
 int parseCommandT(command_t *pipedCommandT, command_t *retCmd1,command_t *retCmd2){
-  retCmd1->name = (char*)malloc(sizeof(pipedCommandT->name));
-  my_strncpy(retCmd1->name,pipedCommandT->name,my_strlen(pipedCommandT->name));
   int pipeCounter;
-  for(pipeCounter = 0;pipeCounter <= (pipedCommandT->argc)-1 && *((pipedCommandT->argv)[pipeCounter]) != '|'; pipeCounter = pipeCounter +1){
-    noop;
-  }
-  if(pipeCounter == pipedCommandT->argc)
-    perror("there is no pipe to parse");
-  int justTemp = pipedCommandT->argc;
-  retCmd2->argc = justTemp - pipeCounter-1;
-  printf("The argc for retCmd2 is:%d\n",retCmd2->argc );
-  retCmd1->argc = pipeCounter;
-  retCmd2->name = (char*)malloc(sizeof((pipedCommandT->argv)[pipeCounter+1]));
-  my_strncpy(retCmd2->name,(pipedCommandT->argv)[pipeCounter+1], my_strlen((pipedCommandT->argv)[pipeCounter+1]));
-  retCmd1->argv = (char**)malloc((retCmd1->argc+1) * sizeof(char *));
-  retCmd2->argv = (char**)malloc((retCmd2->argc+1) * sizeof(char *));
-  int i;
-//  printf("%s\n",pipedCommandT->argv[0] );
-  for(i = 0; i < retCmd1->argc;i++){
-  //  printf("\t\t%d\n",i );
-    retCmd1->argv[i] = (char *)malloc(my_strlen((pipedCommandT->argv)[i])+1);
+    for(pipeCounter = 0;pipeCounter <= (pipedCommandT->argc)-1 && *((pipedCommandT->argv)[pipeCounter]) != '|'; pipeCounter = pipeCounter +1){
+      noop;
+    }
+    if(pipeCounter == pipedCommandT->argc)
+       perror("there is no pipe to parse");
+    char * cmdOne = (char *)malloc(MAXSTRLEN);
+    for(int i = 0; i < pipeCounter;i++){
+      my_strncat(cmdOne,pipedCommandT->argv[i],MAXSTRLEN);
+      my_strncat(cmdOne," ",MAXSTRLEN);
+    }
+    parse(cmdOne,retCmd1);
+    char * cmdTwo = (char *)malloc(MAXSTRLEN);
+    for(int i = pipeCounter+1;i<= pipeCounter + (pipedCommandT->argc - pipeCounter-1);i++){
+      my_strncat(cmdTwo,pipedCommandT->argv[i],MAXSTRLEN);
+      my_strncat(cmdTwo," ",MAXSTRLEN);
+    }
+    parse(cmdTwo,retCmd2);
 
-    my_strncpy((retCmd1->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
-  }
-  retCmd1->argv[i] = NULL;
-  for( i = pipeCounter+1; i <= pipeCounter + retCmd2->argc;i++){//TODO start working here
-    printf("%d\n",i );
-    retCmd2->argv[i] = (char *)malloc(my_strlen((pipedCommandT->argv)[i])+1);
-    my_strncpy((retCmd2->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
-     printf("%s\n",(retCmd2->argv)[i] );
-  }
-  retCmd2->argv[i] = NULL;
+//   retCmd1->name = (char*)malloc(sizeof(pipedCommandT->name));
+//   my_strncpy(retCmd1->name,pipedCommandT->name,my_strlen(pipedCommandT->name));
+//   int pipeCounter;
+//   for(pipeCounter = 0;pipeCounter <= (pipedCommandT->argc)-1 && *((pipedCommandT->argv)[pipeCounter]) != '|'; pipeCounter = pipeCounter +1){
+//     noop;
+//   }
+//   if(pipeCounter == pipedCommandT->argc)
+//     perror("there is no pipe to parse");
+//   int justTemp = pipedCommandT->argc;
+//   retCmd2->argc = justTemp - pipeCounter-1;
+//   printf("The argc for retCmd2 is:%d\n",retCmd2->argc );
+//   retCmd1->argc = pipeCounter;
+//   retCmd2->name = (char*)malloc(sizeof((pipedCommandT->argv)[pipeCounter+1]));
+//   my_strncpy(retCmd2->name,(pipedCommandT->argv)[pipeCounter+1], my_strlen((pipedCommandT->argv)[pipeCounter+1]));
+//   retCmd1->argv = (char**)malloc((retCmd1->argc+1) * sizeof(char *));
+//   retCmd2->argv = (char**)malloc((retCmd2->argc+1) * sizeof(char *));
+//   int i;
+// //  printf("%s\n",pipedCommandT->argv[0] );
+//   for(i = 0; i < retCmd1->argc;i++){
+//   //  printf("\t\t%d\n",i );
+//     retCmd1->argv[i] = (char *)malloc(my_strlen((pipedCommandT->argv)[i])+1);
+//
+//     my_strncpy((retCmd1->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
+//   }
+//   retCmd1->argv[i] = NULL;
+//   for( i = pipeCounter+1; i <= pipeCounter + retCmd2->argc;i++){//TODO start working here
+//     printf("%d\n",i );
+//     retCmd2->argv[i] = (char *)malloc(my_strlen((pipedCommandT->argv)[i])+1);
+//     my_strncpy((retCmd2->argv)[i],(pipedCommandT->argv)[i],my_strlen((pipedCommandT->argv)[i]));
+//      printf("%s\n",(retCmd2->argv)[i] );
+//   }
+//   retCmd2->argv[i] = NULL;
 
 
 
