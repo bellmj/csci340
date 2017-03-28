@@ -36,6 +36,15 @@ static int last_placement_position;
  */
 int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
 {
+  switch (strategy){
+    case BESTFIT:
+
+      break;
+    case FIRSTFIT:
+      break;
+    case NEXTFIT:
+      break;
+  }
 }
 
 /*
@@ -61,6 +70,10 @@ int mem_fragment_count(int frag_size)
  */
 void mem_clear()
 {
+  unsigned char zero = 0;
+  for(int i = 0; i < mem_size;i = i + 1){
+    memory[i] = zero;
+  }
 }
 
 /*
@@ -93,4 +106,17 @@ void mem_free()
  */
 void mem_print()
 {
+ printf("%s\t","" );
+  for(int i = 0; i < 16; i +=1){
+      printf("xxx%01x\t", i);
+  }
+  printf("%s\n","" );
+   for(int i = 0; i <= mem_size-1; i = i + 1){
+     if((i)%16 == 0){
+       printf("%s\n", "");
+       printf("%03xx\t",(i)/16);
+     }
+     printf("%d\t",memory[i]);
+   }
+   printf("%s\n","" );
 }
