@@ -37,11 +37,38 @@ static int last_placement_position;
 int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
 {
   int size_of_chunk = 0;
+  int size_of_bestfit_chunk = 2147483647;//MAX_VALUE
   int start_of_chunk = -1;
   int blocks_probed = 0;
+  int start_of_bestfit_chunk = -1;
   switch (strategy){
     case BESTFIT:
-    //TODO immplement best fit allocation
+      size_of_chunk = 0;
+      start_of_bestfit_chunk = -1;
+      start_of_chunk = -1;
+      blocks_probed = 0;
+      for(int i = 0;i < mem_size;i += 1){
+        if(memory[i]==0&&i != mem_size-1){
+          if(size_of_chunk==0){
+            start_of_chunk = i;
+          }
+          size_of_chunk += 1;
+        }else if(i==mem_size-1 ||(i != 0 && memory[i-1]==0)){// if were at the end of a chunk
+          if(size_of_bestfit_chunk > size_of_chunk && size_of_chunk >= size){//if the chunk we found is smaller than the last best fit
+            size_of_bestfit_chunk = size_of_chunk;                           //chunk found and this chunk is still big enough to fit the allocation
+            start_of_bestfit_chunk = start_of_chunk;
+          }
+        }else{
+          size_of_chunk = 0;
+          start_of_chunk = -1;
+        }
+
+      }
+      //have found the start_of_bestfit_chunk and the size_of_bestfit_chunk at this point
+      printf("%d\t%d\n",size_of_bestfit_chunk,start_of_bestfit_chunk );
+      for(int i = start_of_bestfit_chunk; i < start_of_bestfit_chunk + size; i = i + 1){
+        memory[i] = duration;
+      }
       break;
     case FIRSTFIT:
       size_of_chunk = 0;
@@ -56,8 +83,12 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
           }
           size_of_chunk += 1;
           if(size_of_chunk>=size){//if the chunk we found is large enough to allocate what the user is requesting
+            printf("%d\t%d\n",size_of_chunk,size );
             break;
           }
+        }else{//if we out of a chunk
+          size_of_chunk = 0;
+          start_of_chunk = -1;
         }
       }
       //allocate chunk
@@ -68,7 +99,7 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
       return (start_of_chunk == -1 ? start_of_chunk : blocks_probed);
 
       break;
-    case NEXTFIT:
+    case NEXTFIT://can do a reset for the next counter to check and see if were in a continuous chunk of memory
     //TODO immplement next fit allocation
       break;
   }

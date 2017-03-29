@@ -48,7 +48,11 @@
   time, and the random number generator should be seeded (one time)
   with the value 1235.
 */
-
+// generate random int in range [min, max]
+int myrand_r( long min, long max)
+{
+  return (max - min + 1 ) * ((double)rand()/RAND_MAX) + min;
+}
 int main(int argc, char** argv)
 {
   int sizeofmemory = atoi(argv[1]);
@@ -60,9 +64,16 @@ int main(int argc, char** argv)
   // printf("%d\n",timesRepeat );
   // printf("%d\n",seed );
   mem_init(sizeofmemory);
-  printf("%d\n",mem_allocate(FIRSTFIT,16,10));
   mem_print();
-  mem_single_time_unit_transpired();
+  for(int i = 0; i < 50; i += 1){
+    mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29));
+  }
+  mem_print();
+  for(int i = 0; i < 5; i += 1){
+    mem_single_time_unit_transpired();
+  }
+  mem_print();
+  printf("number of probes:%d\n",mem_allocate(BESTFIT,22,66));
   mem_print();
   return 0;
 }
