@@ -60,7 +60,9 @@ int main(int argc, char** argv)
   // printf("%d\n",timesRepeat );
   // printf("%d\n",seed );
   mem_init(sizeofmemory);
+  printf("%d\n",mem_allocate(FIRSTFIT,16,10));
   mem_print();
-  mem_free();
+  mem_single_time_unit_transpired();
+  mem_print();
   return 0;
 }

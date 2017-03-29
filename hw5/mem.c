@@ -36,14 +36,17 @@ static int last_placement_position;
  */
 int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
 {
+  int size_of_chunk = 0;
+  int start_of_chunk = -1;
+  int blocks_probed = 0;
   switch (strategy){
     case BESTFIT:
     //TODO immplement best fit allocation
       break;
     case FIRSTFIT:
-      int size_of_chunk = 0;
-      int start_of_chunk = -1;
-      int blocks_probed = 0;
+      size_of_chunk = 0;
+      start_of_chunk = -1;
+      blocks_probed = 0;
       for(int i = 0; i < mem_size; i = i + 1){
         if(memory[i]==0){
           if(size_of_chunk==0){
@@ -56,6 +59,10 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
             break;
           }
         }
+      }
+      //allocate chunk
+      for(int i = start_of_chunk; i < start_of_chunk + size; i = i + 1){
+        memory[i] = duration;
       }
       //if there is no space in memory for the allocation return -1;
       return (start_of_chunk == -1 ? start_of_chunk : blocks_probed);
@@ -130,7 +137,8 @@ void mem_free()
  */
 void mem_print()
 {
- printf("%s\t","" );
+  printf("\n%s\n","\t\t\t\t\t\t\t\tPicture Of Memory\n" );
+  printf("%s\t","" );
   for(int i = 0; i < 16; i +=1){
       printf("xxx%01x\t", i);
   }
