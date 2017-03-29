@@ -38,11 +38,31 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
 {
   switch (strategy){
     case BESTFIT:
-
+    //TODO immplement best fit allocation
       break;
     case FIRSTFIT:
+      int size_of_chunk = 0;
+      int start_of_chunk = -1;
+      int blocks_probed = 0;
+      for(int i = 0; i < mem_size; i = i + 1){
+        if(memory[i]==0){
+          if(size_of_chunk==0){
+            //found a start of a block
+            blocks_probed += 1;//
+            start_of_chunk = i;
+          }
+          size_of_chunk += 1;
+          if(size_of_chunk>=size){//if the chunk we found is large enough to allocate what the user is requesting
+            break;
+          }
+        }
+      }
+      //if there is no space in memory for the allocation return -1;
+      return (start_of_chunk == -1 ? start_of_chunk : blocks_probed);
+
       break;
     case NEXTFIT:
+    //TODO immplement next fit allocation
       break;
   }
 }
@@ -54,6 +74,10 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
  */
 int mem_single_time_unit_transpired()
 {
+  for(int i = 0; i < mem_size; i = i + 1){
+    if(memory[i]>0)
+      memory[i] -= 1;
+  }
 }
 
 /*
