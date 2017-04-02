@@ -51,6 +51,7 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
         if(memory[i]==0&&i != mem_size-1){
           if(size_of_chunk==0){
             start_of_chunk = i;
+            blocks_probed += 1;
           }
           size_of_chunk += 1;
         }else if(i==mem_size-1 ||(i != 0 && memory[i-1]==0)){// if were at the end of a chunk
@@ -65,10 +66,11 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
 
       }
       //have found the start_of_bestfit_chunk and the size_of_bestfit_chunk at this point
-      printf("%d\t%d\n",size_of_bestfit_chunk,start_of_bestfit_chunk );
+      printf("%d\t0x%02x\n",size_of_bestfit_chunk,start_of_bestfit_chunk );
       for(int i = start_of_bestfit_chunk; i < start_of_bestfit_chunk + size; i = i + 1){
         memory[i] = duration;
       }
+      return blocks_probed;
       break;
     case FIRSTFIT:
       size_of_chunk = 0;
@@ -100,7 +102,26 @@ int mem_allocate(mem_strats_t strategy, int size, dur_t duration)
 
       break;
     case NEXTFIT://can do a reset for the next counter to check and see if were in a continuous chunk of memory
-    //TODO immplement next fit allocation
+      //TODO finish immplementing this algorithm 
+      printf("%s0x%02x\n","last placement position: ", last_placement_position );
+      if(last_placement_position != 0 && memory[last_placement_position] == 0 && memory[last_placement_position-1] == 0){//if were in the middle of a bigger chunk.
+        while(last_placement_position != 0 && memory[last_placement_position]==0){//while were not at the start of a chunk
+          last_placement_position -= 1;//walk the last_placement_position pointer backwards
+        }
+        printf("%s0x%02x\n","Placement position move to: ", last_placement_position );
+      }
+      if(memory[last_placement_position] == 0){//if we can allocate here
+        //todo count chunk to see if it's big enough
+          //if it's big enough allocate
+          //else move onto ß
+      }else{//if were in a chunk being used
+        while(last_placement_position < mem_size && memory[last_placement_position] != 0){//coutinue until you find another empty chunk or we hit the end
+          last_placement_position -= 1;
+        }
+        if(last_placement_position == mem_size - 1){//if we hit the end of memory
+          last_placement_position = 0;
+        }
+      }
       break;
   }
 }
@@ -146,6 +167,7 @@ void mem_init(int size)
 {
   memory = malloc(sizeof(dur_t)*size);
   mem_size = size;
+  last_placement_position = 0;
 }
 
 /*
@@ -176,10 +198,15 @@ void mem_print()
   printf("%s\n","" );
    for(int i = 0; i <= mem_size-1; i = i + 1){
      if((i)%16 == 0){
+       printf("%s\n","" );
        printf("%s\n", "");
        printf("%03xx\t",(i)/16);
      }
-     printf("%d\t",memory[i]);
+     if(memory[i]==0){
+       printf(" %s\t","X");
+     }else{
+       printf(" %d\t",memory[i]);
+     }
    }
    printf("%s\n","" );
 }
