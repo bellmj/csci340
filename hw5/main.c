@@ -61,17 +61,20 @@ int main(int argc, char** argv)
   int seed = atoi(argv[4]);
   srand(seed);
   mem_init(sizeofmemory);
-  for(int i = 0; i < 1; i = i + 1){//only repeat once
-    int bestfit_allocation_faults = 0;
-    int bestfit_number_of_probes = 0;
-    double bestfit_fragmentation = 0.0;
-    int firstfit_allocation_faults = 0;
-    int firstfit_number_of_probes = 0;
-    double firstfit_fragmentation = 0.0;
-    int nextfit_allocation_faults = 0;
-    int nextfit_number_of_probes = 0;
-    double nextfit_fragmentation = 0.0; 
+  int bestfit_allocation_faults = 0;
+  int bestfit_number_of_probes = 0;
+  double bestfit_fragmentation = 0.0;
+  int firstfit_allocation_faults = 0;
+  int firstfit_number_of_probes = 0;
+  double firstfit_fragmentation = 0.0;
+  int nextfit_allocation_faults = 0;
+  int nextfit_number_of_probes = 0;
+  double nextfit_fragmentation = 0.0;
+  int i = 0;
+  for(i = 0; i < timesRepeat; i = i + 1){//only repeat once
+
     for(dur_t x=BESTFIT;x<=NEXTFIT;x += 1){//only testing best fit.
+      mem_clear();
       int allocation_faults = 0;
       int totalNumberOfProbes = 0;
       int numberOfProbes = 0;
@@ -81,7 +84,7 @@ int main(int argc, char** argv)
         numberOfProbes = mem_allocate(x,myrand_r(7,57),myrand_r(13,27));
         if(numberOfProbes == -1){//if there was a allocation fault
           allocation_faults += 1;
-          printf("%s\n", "\tALLOCATION FAULT");
+          //printf("%s\n", "\tALLOCATION FAULT");
         }else{
           totalNumberOfProbes += numberOfProbes;
         }
@@ -89,47 +92,88 @@ int main(int argc, char** argv)
         mem_single_time_unit_transpired();
       }
         average_external_fragmentation = average_external_fragmentation/durationOfSim;
-      printf("%s%d%s%f\n","The average external Fragmentation for ", x ," is ", average_external_fragmentation);
-      printf("%s%d%s\n","there were ", allocation_faults, " allocation_faults" );
-      printf("%s%d%s\n","There were ",totalNumberOfProbes ," probes" );
+      switch (x) {
+        case BESTFIT:
+          printf("%s%d%s%f\n","The average external Fragmentation for bestfit, run number",i, " is ", average_external_fragmentation);
+          printf("\t%s%d%s\n","there were ", allocation_faults, " allocation_faults" );
+          printf("\t%s%d%s\n","There were ",totalNumberOfProbes ," probes" );
+          bestfit_allocation_faults += allocation_faults;
+          bestfit_number_of_probes += totalNumberOfProbes;
+          bestfit_fragmentation += average_external_fragmentation;
+        break;
+        case FIRSTFIT:
+          printf("%s%d%s%f\n","The average external Fragmentation for firstfit, run number",i, " is ", average_external_fragmentation);
+          printf("\t%s%d%s\n","there were ", allocation_faults, " allocation_faults" );
+          printf("\t%s%d%s\n","There were ",totalNumberOfProbes ," probes" );
+          firstfit_allocation_faults += allocation_faults;
+          firstfit_number_of_probes += totalNumberOfProbes;
+          firstfit_fragmentation += average_external_fragmentation;
+        break;
+        case NEXTFIT:
+          printf("%s%d%s%f\n","The average external Fragmentation for nextfit, run number",i, " is ", average_external_fragmentation);
+          printf("\t%s%d%s\n","there were ", allocation_faults, " allocation_faults" );
+          printf("\t%s%d%s\n","There were ",totalNumberOfProbes ," probes" );
+          nextfit_allocation_faults += allocation_faults;
+          nextfit_number_of_probes += totalNumberOfProbes;
+          nextfit_fragmentation += average_external_fragmentation;
+        break;
+      }
+
 
     }
+
+
   }
+  printf("%s%f\n","The total average external Fragmentation for firstfit is ",firstfit_fragmentation/(i+1));
+  printf("\t%s%d%s\n","there were ", firstfit_allocation_faults, " allocation_faults" );
+  printf("\t%s%d%s\n","There were ",firstfit_number_of_probes ," probes" );
+  \
+  printf("%s%f\n","The total average external Fragmentation for bestfit is ",bestfit_fragmentation/(i+1));
+  printf("\t%s%d%s\n","there were ", bestfit_allocation_faults, " allocation_faults" );
+  printf("\t%s%d%s\n","There were ",bestfit_number_of_probes ," probes" );
+
+  printf("%s%f\n","The total average external Fragmentation for nextfit is ",nextfit_fragmentation/(i+1));
+  printf("\t%s%d%s\n","there were ",  nextfit_allocation_faults, " allocation_faults" );
+  printf("\t%s%d%s\n","There were ",nextfit_number_of_probes ," probes" );
 
 
   // printf("%d\n",sizeofmemory );
   // printf("%d\n",durationOfSim);
   // printf("%d\n",timesRepeat );
   // printf("%d\n",seed );
-  //mem_init(sizeofmemory);
-  //Testing code to make sure the functions in mem.c worked before I started with the testing
-    // mem_print();
-    // for(int i = 0; i < 50; i += 1){
-    //   mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29));
-    // }
-    // mem_print();
-    // for(int i = 0; i < 5; i += 1){
-    //   mem_single_time_unit_transpired();
-    // }
-    // mem_print();
-    // printf("number of probes:%d\n",mem_allocate(NEXTFIT,16,66));
-    // mem_print();
-    // for(int i = 0; i < 65; i = i + 1){
-    //   mem_single_time_unit_transpired();
-    // }
-    // mem_print();
-    // printf("number of probes:%d\n",mem_allocate(NEXTFIT,16,66));
-    // mem_print();
-    // for(int i = 0; i < 85; i += 1){
-    //   printf("\t%d\n",(mem_allocate(NEXTFIT,myrand_r(1,20),myrand_r(1,29))));
-    // }
-    // mem_print();
-    // for(int i = 0; i < 20; i = i + 1){
-    //   mem_single_time_unit_transpired();
-    // }
-    // mem_print();
-    // printf("\t%d\n",mem_allocate(NEXTFIT,16,66));
-    // mem_print();
+  // mem_init(sizeofmemory);
+  // //Testing code to make sure the functions in mem.c worked before I started with the testing
+  //   mem_print();
+  //   for(int i = 0; i < 50; i += 1){
+  //     mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29));
+  //   }
+  //   mem_print();
+  //   for(int i = 0; i < 5; i += 1){
+  //     mem_single_time_unit_transpired();
+  //   }
+  //   mem_print();
+  //   printf("number of probes:%d\n",mem_allocate(NEXTFIT,16,66));
+  //   mem_print();
+  //   for(int i = 0; i < 65; i = i + 1){
+  //     mem_single_time_unit_transpired();
+  //   }
+  //   mem_print();
+  //   printf("number of probes:%d\n",mem_allocate(NEXTFIT,16,66));
+  //   mem_print();
+  //   for(int i = 0; i < 95; i += 1){
+  //     printf("\t%d\n",(mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29))));
+  //   }
+  //   mem_print();
+  //   for(int i = 0; i < 20; i = i + 1){
+  //     mem_single_time_unit_transpired();
+  //   }
+  //   mem_print();
+  //   printf("\t%d\n",mem_allocate(NEXTFIT,16,66));
+  //   for(int i = 0; i < 95; i += 1){
+  //     printf("\t%d\n",(mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29))));
+  //   }
+  //   mem_print();
+  //   printf("%d\n",mem_fragment_count(MIN_REQUEST_SIZE) );
 
   return 0;
 }
