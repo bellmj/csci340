@@ -41,7 +41,7 @@
   fourth parameter is a random number seed. Here is an example command
   line:
 
-  ./hw7 1000 3000 100 1235
+  ./hw5 1000 3000 100 1235
 
   This means that your program should initialize physical memory to
   1,000 units, perform 100 runs with each run taking 3000 units of
@@ -59,18 +59,39 @@ int main(int argc, char** argv)
   int durationOfSim = atoi(argv[2]);
   int timesRepeat = atoi(argv[3]);
   int seed = atoi(argv[4]);
-  double average_external_fragmentation = 0.0;
   srand(seed);
-  for(int i = 0; i < timesRepeat; i = i + 1){
-    for(x=BESTFIT;x<=NEXTFIT;x += 1){
-      for(durationOfSim; durationOfSim > 0; durationOfSim -= 1){\
-        int numberOfProbes = mem_allocate(x,myrand_r(MIN_REQUEST_SIZE,MAX_REQUEST_SIZE),myrand_r(MIN_DURATION,MAX_DURATION));
+  mem_init(sizeofmemory);
+  for(int i = 0; i < 1; i = i + 1){//only repeat once
+    int bestfit_allocation_faults = 0;
+    int bestfit_number_of_probes = 0;
+    double bestfit_fragmentation = 0.0;
+    int firstfit_allocation_faults = 0;
+    int firstfit_number_of_probes = 0;
+    double firstfit_fragmentation = 0.0;
+    int nextfit_allocation_faults = 0;
+    int nextfit_number_of_probes = 0;
+    double nextfit_fragmentation = 0.0; 
+    for(dur_t x=BESTFIT;x<=NEXTFIT;x += 1){//only testing best fit.
+      int allocation_faults = 0;
+      int totalNumberOfProbes = 0;
+      int numberOfProbes = 0;
+      double average_external_fragmentation = 0.0;
+      for(int simdur = durationOfSim; simdur > 0; simdur -= 1){
+//printf("%d\n",simdur );
+        numberOfProbes = mem_allocate(x,myrand_r(7,57),myrand_r(13,27));
         if(numberOfProbes == -1){//if there was a allocation fault
-          frag_count += 1;
+          allocation_faults += 1;
+          printf("%s\n", "\tALLOCATION FAULT");
         }else{
-          
+          totalNumberOfProbes += numberOfProbes;
         }
+        average_external_fragmentation += mem_fragment_count(MIN_REQUEST_SIZE);
+        mem_single_time_unit_transpired();
       }
+        average_external_fragmentation = average_external_fragmentation/durationOfSim;
+      printf("%s%d%s%f\n","The average external Fragmentation for ", x ," is ", average_external_fragmentation);
+      printf("%s%d%s\n","there were ", allocation_faults, " allocation_faults" );
+      printf("%s%d%s\n","There were ",totalNumberOfProbes ," probes" );
 
     }
   }
@@ -80,7 +101,7 @@ int main(int argc, char** argv)
   // printf("%d\n",durationOfSim);
   // printf("%d\n",timesRepeat );
   // printf("%d\n",seed );
-  mem_init(sizeofmemory);
+  //mem_init(sizeofmemory);
   //Testing code to make sure the functions in mem.c worked before I started with the testing
     // mem_print();
     // for(int i = 0; i < 50; i += 1){

@@ -204,7 +204,7 @@ int mem_fragment_count(int frag_size)
       size_of_chunk = 0;
     }
   }
-  return frag_size;
+  return frag_count;
 }
 
 /*
