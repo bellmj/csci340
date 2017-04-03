@@ -59,21 +59,56 @@ int main(int argc, char** argv)
   int durationOfSim = atoi(argv[2]);
   int timesRepeat = atoi(argv[3]);
   int seed = atoi(argv[4]);
+  double average_external_fragmentation = 0.0;
+  srand(seed);
+  for(int i = 0; i < timesRepeat; i = i + 1){
+    for(x=BESTFIT;x<=NEXTFIT;x += 1){
+      for(durationOfSim; durationOfSim > 0; durationOfSim -= 1){\
+        int numberOfProbes = mem_allocate(x,myrand_r(MIN_REQUEST_SIZE,MAX_REQUEST_SIZE),myrand_r(MIN_DURATION,MAX_DURATION));
+        if(numberOfProbes == -1){//if there was a allocation fault
+          frag_count += 1;
+        }else{
+          
+        }
+      }
+
+    }
+  }
+
+
   // printf("%d\n",sizeofmemory );
   // printf("%d\n",durationOfSim);
   // printf("%d\n",timesRepeat );
   // printf("%d\n",seed );
   mem_init(sizeofmemory);
-  mem_print();
-  for(int i = 0; i < 50; i += 1){
-    mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29));
-  }
-  mem_print();
-  for(int i = 0; i < 5; i += 1){
-    mem_single_time_unit_transpired();
-  }
-  mem_print();
-  printf("number of probes:%d\n",mem_allocate(BESTFIT,22,66));
-  mem_print();
+  //Testing code to make sure the functions in mem.c worked before I started with the testing
+    // mem_print();
+    // for(int i = 0; i < 50; i += 1){
+    //   mem_allocate(BESTFIT,myrand_r(1,20),myrand_r(1,29));
+    // }
+    // mem_print();
+    // for(int i = 0; i < 5; i += 1){
+    //   mem_single_time_unit_transpired();
+    // }
+    // mem_print();
+    // printf("number of probes:%d\n",mem_allocate(NEXTFIT,16,66));
+    // mem_print();
+    // for(int i = 0; i < 65; i = i + 1){
+    //   mem_single_time_unit_transpired();
+    // }
+    // mem_print();
+    // printf("number of probes:%d\n",mem_allocate(NEXTFIT,16,66));
+    // mem_print();
+    // for(int i = 0; i < 85; i += 1){
+    //   printf("\t%d\n",(mem_allocate(NEXTFIT,myrand_r(1,20),myrand_r(1,29))));
+    // }
+    // mem_print();
+    // for(int i = 0; i < 20; i = i + 1){
+    //   mem_single_time_unit_transpired();
+    // }
+    // mem_print();
+    // printf("\t%d\n",mem_allocate(NEXTFIT,16,66));
+    // mem_print();
+
   return 0;
 }
