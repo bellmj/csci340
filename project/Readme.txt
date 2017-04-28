@@ -5,7 +5,7 @@ mainmemoryaccesstime: This function determines the average access time of the ma
 
 averageCacheAccessTime: As above this function determines the average access time of the cache. This is accomplished by allocating an array that 		is known to be larger than the cache (i.e. 16 MB) and populated with integer values. It is then looped through 10000 times where the 		first access ensures that the cache is populated, then the timed access is one ahead of the first access. Before the accumualted access 	times are returned they are averaged.
 
-findCacheSize: 
+findCacheSize: Taking an array larger than the cache (16 MB) that is populated with integer values and iterating through it until there are 		patterns of main memory accesses. basically you write to the array to establish it in the cache and then time the reads until the times 	are greater than the cache times. This would indicate that the cache has been overflowed and is now being accessed through the main 		memory. using the know size of an integer (4 Bytes) to then calculate the size based on the number of iterations it took to get to the 		main memory accesses.
 
 
 
