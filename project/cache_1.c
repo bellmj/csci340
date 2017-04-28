@@ -3,6 +3,7 @@
 #include <stdlib.h>	/* for exit() definition */
 #include <time.h>
 #include <math.h>
+#include "cache_1.h"
 
 #define BILLION 1E9
 
