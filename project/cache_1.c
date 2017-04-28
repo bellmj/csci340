@@ -16,10 +16,11 @@ double mainmemoryaccesstime(){
 	struct timespec start, end;
 
 	double totalns = 0.0;
+	int what;
 	for(int i = 0; i < 10000; i++){
 			 system("sync");
 			clock_gettime(CLOCK_REALTIME, &start);
-		 	dataArray[i];
+		 	what = dataArray[i];
 		 	clock_gettime(CLOCK_REALTIME, &end);
 		 double accum = (( end.tv_sec - start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
 		 totalns += accum;
@@ -41,10 +42,10 @@ double averageCacheAccessTime(){
 	double totalns = 0.0;
 	int what;
 	for(int i = 0; i < 10000; i++){
-		 
+
 		 what = dataArray[0];
 		  clock_gettime(CLOCK_REALTIME, &start);
-		 	dataArray[0];
+		 	what = dataArray[0];
 		 clock_gettime(CLOCK_REALTIME, &end);
 		  double accum = (( end.tv_sec -start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
 			 totalns += accum;
@@ -73,12 +74,28 @@ int findCacheSize(double x){
 
 int findCacheBlockSize(){
 
-	struct timespec start,end;
-	static int array[10000];
-	int size = 0;
+	static int * dataArray;
+	dataArray = malloc(2 * 1024 * 1024 * 8);// allocate 16 meg in memory
+	for(int i = 0; i < 1024 * 1024 * 2 ; i++){
+		 dataArray[i] = i;
+	}
+	struct timespec start, end;
+	printf("%s\n","top of for" );
+	double totalns = 0.0;
+	int what;
+	for(int i = 0; i < 1000; i++){
 
+		 what = dataArray[0];
+			clock_gettime(CLOCK_REALTIME, &start);
+			what = dataArray[i];
+		 clock_gettime(CLOCK_REALTIME, &end);
+			double accum = (( end.tv_sec -start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
+			 if(accum>50){
+			 printf("%d %f\n",i,accum );
+		 	}
+		 }
 
-	return size;
+	return totalns/(double)10000;
 }
 
 int main(int argc, char** argv){
