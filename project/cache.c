@@ -17,7 +17,7 @@ int main(int argc, char** argv){
   int * dataArray;
   dataArray = malloc(2 * 1024 * 1024 * 8);// allocate 16 meg in memory
   uint64_t totalns = 0;
-  for(int z = 0; z < 1; z += 1){
+  for(int z = 0; z < 100; z += 1){
     // for(int i = 0; i < 10000; i += 1){
     //    system("sync");//clear cache
     //   clock_gettime( CLOCK_MONOTONIC ,&start);//start timer
