@@ -10,7 +10,7 @@
 double mainmemoryaccesstime(){
 	static int * dataArray;
 	dataArray = malloc(2 * 1024 * 1024 * 8);// allocate 16 meg in memory
-	for(int i = 0; i < 1024 * 1024 * 2 ; i++){
+	for(int i = 0; i < 1024 * 1024 * 2 ; i++){//loads the array to prevent compression
 		 dataArray[i] = 1;
 	}
 	struct timespec start, end;
@@ -18,9 +18,9 @@ double mainmemoryaccesstime(){
 	double totalns = 0.0;
 	int what;
 	for(int i = 0; i < 10000; i++){
-			 system("sync");
+			 system("sync");//clears the cpu cache
 			clock_gettime(CLOCK_REALTIME, &start);
-		 	what = dataArray[i];
+		 	what = dataArray[i];//access a value in main memory; a cache miss
 		 	clock_gettime(CLOCK_REALTIME, &end);
 		 double accum = (( end.tv_sec - start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
 		 totalns += accum;
@@ -38,14 +38,13 @@ double averageCacheAccessTime(){
 		 dataArray[i] = 1;
 	}
 	struct timespec start, end;
-	printf("%s\n","top of for" );
 	double totalns = 0.0;
 	int what;
 	for(int i = 0; i < 10000; i++){
 
-		 what = dataArray[0];
+		 what = dataArray[0];//access the first item the data array; this pulls it into cache
 		  clock_gettime(CLOCK_REALTIME, &start);
-		 	what = dataArray[0];
+		 	what = dataArray[0];//access the same value in cache; a cache hit
 		 clock_gettime(CLOCK_REALTIME, &end);
 		  double accum = (( end.tv_sec -start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
 			 totalns += accum;
@@ -80,26 +79,25 @@ int findCacheBlockSize(){
 		 dataArray[i] = i;
 	}
 	struct timespec start, end;
-	printf("%s\n","top of for" );
 	double totalns = 0.0;
 	int what;
 	int value[2];
 	for(int i = 0; i < 1000; i++){
 
-		 what = dataArray[0];
+		 what = dataArray[0];//access the first value in dataArry. THis pulls a whole line into cache;
 			clock_gettime(CLOCK_REALTIME, &start);
-			what = dataArray[i];
+			what = dataArray[i];//access a value from in dataArray. at first these will be hits until the line size is reached
 		 clock_gettime(CLOCK_REALTIME, &end);
 			double accum = (( end.tv_sec -start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
-			 if(accum>149){
+			 if(accum>149){//through our experimentation we found that values above this are likely a cache miss
 
-				if(value[2] == value[1]){								
+				if(value[2] == value[1]){
 				 	value[1]=i;
 
 				}else if(value[2] == value[1]){
-					value[2] = i;			
+					value[2] = i;
 				}else{
-					value[1] = i;				
+					value[1] = i;
 				}
 		 	}
 		 }
