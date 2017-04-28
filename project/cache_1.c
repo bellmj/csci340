@@ -83,6 +83,7 @@ int findCacheBlockSize(){
 	printf("%s\n","top of for" );
 	double totalns = 0.0;
 	int what;
+	int value[2];
 	for(int i = 0; i < 1000; i++){
 
 		 what = dataArray[0];
@@ -90,12 +91,20 @@ int findCacheBlockSize(){
 			what = dataArray[i];
 		 clock_gettime(CLOCK_REALTIME, &end);
 			double accum = (( end.tv_sec -start.tv_sec)*BILLION + (end.tv_nsec - start.tv_nsec));
-			 if(accum>50){
-			 printf("%d %f\n",i,accum );
+			 if(accum>149){
+
+				if(value[2] == value[1]){								
+				 	value[1]=i;
+
+				}else if(value[2] == value[1]){
+					value[2] = i;			
+				}else{
+					value[1] = i;				
+				}
 		 	}
 		 }
 
-	return totalns/(double)10000;
+	return value[2] - value[1];
 }
 
 int main(int argc, char** argv){
@@ -116,6 +125,6 @@ int main(int argc, char** argv){
 	}
 	printf("Total Cache Size : %d\n", cacheSize);
 
-	int cacheBlockSize = findCacheBlockSize();
-	printf("Total Cache Block Size: %d\n", cacheBlockSize);
+	int cacheBlockSize = findCacheBlockSize() * 4;
+	printf("Total Cache Block Size: %d Bytes\n", cacheBlockSize);
 }
