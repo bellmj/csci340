@@ -10,3 +10,4 @@ findCacheSize: Taking an array larger than the cache (16 MB) that is populated w
 
 
 findCacheBlockSize: We take an array larger than the cache (i.e. 16 MB) and populate it with integer values. We then loop through the some value 	of the array to determine a pattern of longer time calls at specific intervals. we assume these intervals to be 64 bytes apart or 16 ints 	apart. Since an int is 4 bytes then the pattern of longer calls should represent the line size of the cache itself. 
+	We determined a cache block size of 128 Bytes based on Joe's System Intel® Celeron(R) CPU N3050 @ 1.60GHz × 2 
